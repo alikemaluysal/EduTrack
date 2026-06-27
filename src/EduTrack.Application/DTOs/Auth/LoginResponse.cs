@@ -1,6 +1,4 @@
-﻿using BlogApp.Data.Entities;
-
-namespace EduTrack.Application.DTOs.Auth;
+﻿namespace EduTrack.Application.DTOs.Auth;
 
 public class LoginResponse
 {

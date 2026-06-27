@@ -1,5 +1,7 @@
-﻿using Core.Results;
+﻿using Core.Exceptions;
+using Core.Results;
 using Core.Security;
+using EduTrack.Application.BusinessRules;
 using EduTrack.Application.DTOs.Auth;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Entities;
@@ -9,69 +11,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApp.Application.Services.Concrete;
 
-public class AuthService(AppDbContext context) : IAuthService
+public class AuthService(AppDbContext context, AuthBusinessRules authBusinessRules) : IAuthService
 {
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
     {
-        var user = await context.Users
-                                .Include(u => u.UserRoles)
-                                .ThenInclude(ur => ur.Role)
-                                .FirstOrDefaultAsync(u => u.Email == request.Email);
-
-        if (user is null)
-            return Result<LoginResponse>.Fail("Email adresi veya şifre hatalı.");
-
-
-        var passwordCorrect = HashingHelper.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt);
-        if (!passwordCorrect)
-            return Result<LoginResponse>.Fail("Email adresi veya şifre hatalı.");
-
-
-        var response = new LoginResponse
+        try
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            IsActive = user.IsActive,
-            Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
-        };
+            var user = await context.Users
+                   .Include(u => u.UserRoles)
+                   .ThenInclude(ur => ur.Role)
+                   .FirstOrDefaultAsync(u => u.Email == request.Email);
 
 
-        return Result<LoginResponse>.Ok(response);
+            authBusinessRules.CheckUserExists(user);
+            authBusinessRules.CheckUserPasswordMatch(user!, request.Password);
+
+
+            var response = new LoginResponse
+            {
+                Id = user!.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                IsActive = user.IsActive,
+                Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
+            };
+
+
+            return Result<LoginResponse>.Ok(response);
+        }
+        catch (BusinessException ex)
+        {
+            return Result<LoginResponse>.Fail(ex.Message);
+        }
+
     }
 
     public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request)
     {
-        var userExists = context.Users.Any(u => u.Email == request.Email);
-        if (userExists)
-            return Result<RegisterResponse>.Fail("Bu email ile kayıtlı bir kullanıcı zaten var.");
-
-        var result = HashingHelper.CreatePasswordHash(request.Password);
-
-        var user = new User
+        try
         {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Email = request.Email,
-            PasswordHash = result.Hash,
-            PasswordSalt = result.Salt,
-            IsActive = true, //TODO: email doğrulama eklendiğinde burayı false yapalım
-        };
+            authBusinessRules.CheckUserExistsByEmail(request.Email);
 
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+            var result = HashingHelper.CreatePasswordHash(request.Password);
 
+            var user = new User
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                PasswordHash = result.Hash,
+                PasswordSalt = result.Salt,
+                IsActive = true, //TODO: email doğrulama eklendiğinde burayı false yapalım
+            };
 
-        var response = new RegisterResponse
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            var response = new RegisterResponse
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                IsActive = user.IsActive,
+            };
+
+            return Result<RegisterResponse>.Ok(response);
+
+        }
+        catch (BusinessException ex)
         {
-            UserId = user.Id,
-            Email = user.Email,
-            IsActive = user.IsActive,
-        };
-
-        return Result<RegisterResponse>.Ok(response);
+            return Result<RegisterResponse>.Fail(ex.Message);
+        }
     }
-
 
 }

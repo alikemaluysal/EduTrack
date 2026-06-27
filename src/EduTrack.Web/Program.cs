@@ -1,11 +1,14 @@
 using EduTrack.Persistence;
+using EduTrack.Application;
 using EduTrack.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseStaticWebAssets();
+builder.Services.AddCookieAuth();
 builder.Services.AddControllersWithViews();
 builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
