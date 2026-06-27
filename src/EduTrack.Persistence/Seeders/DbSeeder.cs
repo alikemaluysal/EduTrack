@@ -15,12 +15,16 @@ public static class DbSeeder
 
     public static async Task SeedRolesAsync(AppDbContext context)
     {
-        var roleIds = RoleConstants.BaseRoles.Select(r => r.Id).ToList();
+        var baseRoles = RoleConstants.BaseRoles;
 
-        if (await context.Roles.AnyAsync(r => roleIds.Contains(r.Id)))
-            return;
+        foreach (var role in baseRoles)
+        {
+            if (!await context.Roles.AnyAsync(r => r.Id == role.Id))
+            {
+                await context.Roles.AddAsync(role);
+            }
+        }
 
-        await context.Roles.AddRangeAsync(RoleConstants.BaseRoles);
         await context.SaveChangesAsync();
     }
   
