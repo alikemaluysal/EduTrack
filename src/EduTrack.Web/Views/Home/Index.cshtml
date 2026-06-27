@@ -2,7 +2,56 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="page-title h2 mb-1">Courses</h1>
+        <p class="text-secondary mb-0">Browse active demo classes.</p>
+    </div><button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCourse">
+    Create
+    course
+</button>
+</div>
+<div class="row g-4">
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="course-banner p-4 rounded-top">
+                <h2 class="h4 mb-1">Computer Science 101</h2>
+                <p class="mb-0">Alex Rivera</p>
+            </div>
+            <div class="card-body">
+                <p class="text-secondary">Programming basics, algorithms, and digital citizenship.</p>
+                <div class="d-flex justify-content-between">
+                    <span class="badge text-bg-success">32 students</span><a href="course-detail.html" class="btn btn-outline-success btn-sm">Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="course-banner p-4 rounded-top">
+                <h2 class="h4 mb-1">Algebra Foundations</h2>
+                <p class="mb-0">Priya Nair</p>
+            </div>
+            <div class="card-body">
+                <p class="text-secondary">Linear equations, graphing, and problem-solving practice.</p>
+                <div class="d-flex justify-content-between">
+                    <span class="badge text-bg-success">28 students</span><a href="course-detail.html" class="btn btn-outline-success btn-sm">Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="course-banner p-4 rounded-top">
+                <h2 class="h4 mb-1">World History</h2>
+                <p class="mb-0">Nora Clark</p>
+            </div>
+            <div class="card-body">
+                <p class="text-secondary">Research, timelines, and discussion-based assignments.</p>
+                <div class="d-flex justify-content-between">
+                    <span class="badge text-bg-success">26 students</span><a href="course-detail.html" class="btn btn-outline-success btn-sm">Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
