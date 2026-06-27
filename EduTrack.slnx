@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/core/">
+    <Project Path="core/Core/Core.csproj" Id="6e99363f-1750-4746-8985-22e17401c74c" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/EduTrack.Application/EduTrack.Application.csproj" Id="618dd6e9-0b65-42a5-af45-a8915b294e05" />
+    <Project Path="src/EduTrack.Domain/EduTrack.Domain.csproj" Id="ef9826b6-4039-40d5-a816-9ec0aff1c18b" />
+    <Project Path="src/EduTrack.Infrastructure/EduTrack.Infrastructure.csproj" Id="cad4da0c-e952-450f-8ce2-11d9b72399e4" />
+    <Project Path="src/EduTrack.Persistence/EduTrack.Persistence.csproj" Id="7d74491e-f962-4e5b-a3f7-e6c0b5695c8a" />
+    <Project Path="src/EduTrack.Web/EduTrack.Web.csproj" Id="445abc9f-03ae-4979-9283-002d4a2b9d7b" />
+  </Folder>
+</Solution>
