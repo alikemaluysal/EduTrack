@@ -1,4 +1,5 @@
-﻿using EduTrack.Domain.Constants;
+﻿using Core.Security;
+using EduTrack.Domain.Constants;
 using EduTrack.Domain.Entities;
 using EduTrack.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ public static class DbSeeder
     public static async Task SeedAsync(AppDbContext context)
     {
         await SeedRolesAsync(context);
+        await SeedAdminUserAsync(context);
     }
 
     public static async Task SeedRolesAsync(AppDbContext context)
@@ -27,5 +29,27 @@ public static class DbSeeder
 
         await context.SaveChangesAsync();
     }
-  
+
+    public static async Task SeedAdminUserAsync(AppDbContext context)
+    {
+        var passwordResult = HashingHelper.CreatePasswordHash("112");
+        var adminId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var adminUser = new User
+        {
+            Id = adminId,
+            FirstName = "Admin",
+            LastName = "User",
+            Email = "admin@siliconmade.com",
+            IsActive = true,
+            PasswordHash = passwordResult.Hash,
+            PasswordSalt = passwordResult.Salt,
+            UserRoles = [new UserRole { RoleId = RoleConstants.AdminId }]
+        };
+
+        if (!await context.Users.AnyAsync(u => u.Id == adminId))
+        {
+            await context.Users.AddAsync(adminUser);
+            await context.SaveChangesAsync();
+        }
+    }
 }

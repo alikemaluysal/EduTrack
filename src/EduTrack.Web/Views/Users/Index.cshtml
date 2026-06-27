@@ -1,0 +1,74 @@
+﻿@using EduTrack.Application.DTOs.User
+@using EduTrack.Domain.Constants
+@model List<UserDto>
+
+<div class="container py-4">
+    <h1 class="page-title h2">Users</h1>
+
+    <partial name="Partials/_SuccessMessageAlert" />
+    <form asp-action="Index" method="get">
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-8">
+                <input class="form-control" placeholder="Search users" name="searchQuery" />
+            </div>
+
+            <div class="col-md-4">
+                <select class="form-select" name="roleId" onchange="this.form.submit()">
+                    <option value="">All roles</option>
+                    @foreach (var role in RoleConstants.BaseRoles)
+                    {
+                        <option value="@role.Id">@role.Name</option>
+
+                    }
+                </select>
+            </div>
+
+
+        </div>
+    </form>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.FirstName @user.LastName</td>
+                            <td>@user.Email</td>
+                            <td>
+                                @foreach (var role in user.UserRoles)
+                                {
+                                    <span class="badge text-bg-primary">@role.RoleName</span>
+
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(@user.IsActive ? "text-bg-success" : "text-bg-danger")">@user.IsActive</span>
+                            </td>
+                            <td>
+                                <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                            </td>
+                        </tr>
+                    }
+
+                 
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

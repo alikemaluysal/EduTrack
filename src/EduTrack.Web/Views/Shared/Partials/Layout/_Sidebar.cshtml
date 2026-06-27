@@ -1,8 +1,11 @@
 ﻿<aside class="col-lg-2 sidebar p-3">
     <nav class="nav flex-column">
-        <a class="nav-link" href="dashboard.html">Dashboard</a>
-        <a class="nav-link active" href="courses.html">Courses</a>
-        <a class="nav-link" href="assignments.html">Assignments</a>
-        <a class="nav-link" href="materials.html">Materials</a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="nav-link active" asp-action="Index" asp-controller="Users">Users</a>
+        }
+
+        <a class="nav-link active" asp-action="Index" asp-controller="Home">Courses</a>
     </nav>
 </aside>

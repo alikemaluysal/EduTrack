@@ -1,6 +1,7 @@
 ﻿using BlogApp.Application.Services.Concrete;
 using EduTrack.Application.BusinessRules;
 using EduTrack.Application.Services.Abstract;
+using EduTrack.Application.Services.Concrete;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,7 @@ public static class ApplicationExtensions
     {
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
 
 
         //TODO: business rule tipine sahip tüm classlar otomatik inject edilsin
