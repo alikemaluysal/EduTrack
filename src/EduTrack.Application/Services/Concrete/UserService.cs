@@ -1,4 +1,6 @@
 ﻿using Core.Results;
+using Core.Exceptions;
+using EduTrack.Application.BusinessRules;
 using EduTrack.Application.DTOs.User;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Entities;
@@ -7,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EduTrack.Application.Services.Concrete;
 
-public class UserService(AppDbContext context) : IUserService
+public class UserService(AppDbContext context, UserBusinessRules userBusinessRules) : IUserService
 {
     public async Task<Result<List<UserDto>>> GetAllUsersAsync(string? searchQuery = null, int? roleId = null)
     {
@@ -52,29 +54,33 @@ public class UserService(AppDbContext context) : IUserService
 
     public async Task<Result<UserDto>> GetUserByIdAsync(Guid id)
     {
-        var user = await context.Users
-            .Include(x => x.UserRoles)
-            .ThenInclude(ur => ur.Role)
-            .FirstOrDefaultAsync(x => x.Id == id);
-
-        if (user is null)
+        try
         {
-            return Result<UserDto>.Fail("User not found.");
-        }
+            var user = await context.Users
+                .Include(x => x.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-        return Result<UserDto>.Ok(new UserDto
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            IsActive = user.IsActive,
-            UserRoles = user.UserRoles.Select(ur => new UserRoleDto
+            userBusinessRules.CheckUserExists(user);
+
+            return Result<UserDto>.Ok(new UserDto
             {
-                RoleId = ur.RoleId,
-                RoleName = ur.Role.Name
-            }).ToList()
-        });
+                Id = user!.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                IsActive = user.IsActive,
+                UserRoles = user.UserRoles.Select(ur => new UserRoleDto
+                {
+                    RoleId = ur.RoleId,
+                    RoleName = ur.Role.Name
+                }).ToList()
+            });
+        }
+        catch (BusinessException ex)
+        {
+            return Result<UserDto>.Fail(ex.Message);
+        }
     }
 
     public async Task<Result<List<RoleDto>>> GetAllRolesAsync()
@@ -93,57 +99,53 @@ public class UserService(AppDbContext context) : IUserService
 
     public async Task<Result> UpdateUserAsync(UpdateUserRequest request)
     {
-        var user = await context.Users
-            .Include(x => x.UserRoles)
-            .FirstOrDefaultAsync(x => x.Id == request.Id);
-
-        if (user is null)
+        try
         {
-            return Result.Fail("User not found.");
-        }
+            var user = await context.Users
+                .Include(x => x.UserRoles)
+                .FirstOrDefaultAsync(x => x.Id == request.Id);
 
-        var emailExists = await context.Users.AnyAsync(x => x.Id != request.Id && x.Email == request.Email);
-        if (emailExists)
+            userBusinessRules.CheckUserExists(user);
+            await userBusinessRules.CheckEmailIsUniqueForUserAsync(request.Id, request.Email);
+
+            var validRoleIds = await context.Roles
+                .Where(r => request.RoleIds.Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            userBusinessRules.CheckRolesAreValid(validRoleIds, request.RoleIds);
+
+            user!.FirstName = request.FirstName.Trim();
+            user.LastName = request.LastName.Trim();
+            user.Email = request.Email.Trim();
+            user.IsActive = request.IsActive;
+
+            var selectedRoleIds = validRoleIds.ToHashSet();
+            var rolesToRemove = user.UserRoles
+                .Where(ur => !selectedRoleIds.Contains(ur.RoleId))
+                .ToList();
+            var existingRoleIds = user.UserRoles
+                .Select(ur => ur.RoleId)
+                .ToHashSet();
+            var rolesToAdd = selectedRoleIds
+                .Where(roleId => !existingRoleIds.Contains(roleId))
+                .Select(roleId => new UserRole
+                {
+                    UserId = user.Id,
+                    RoleId = roleId
+                })
+                .ToList();
+
+            context.UserRoles.RemoveRange(rolesToRemove);
+            await context.UserRoles.AddRangeAsync(rolesToAdd);
+            await context.SaveChangesAsync();
+
+            return Result.Ok("User updated successfully.");
+        }
+        catch (BusinessException ex)
         {
-            return Result.Fail("Email is already used by another user.");
+            return Result.Fail(ex.Message);
         }
-
-        var validRoleIds = await context.Roles
-            .Where(r => request.RoleIds.Contains(r.Id))
-            .Select(r => r.Id)
-            .ToListAsync();
-
-        if (validRoleIds.Count != request.RoleIds.Distinct().Count())
-        {
-            return Result.Fail("Selected roles are invalid.");
-        }
-
-        user.FirstName = request.FirstName.Trim();
-        user.LastName = request.LastName.Trim();
-        user.Email = request.Email.Trim();
-        user.IsActive = request.IsActive;
-
-        var selectedRoleIds = validRoleIds.ToHashSet();
-        var rolesToRemove = user.UserRoles
-            .Where(ur => !selectedRoleIds.Contains(ur.RoleId))
-            .ToList();
-        var existingRoleIds = user.UserRoles
-            .Select(ur => ur.RoleId)
-            .ToHashSet();
-        var rolesToAdd = selectedRoleIds
-            .Where(roleId => !existingRoleIds.Contains(roleId))
-            .Select(roleId => new UserRole
-            {
-                UserId = user.Id,
-                RoleId = roleId
-            })
-            .ToList();
-
-        context.UserRoles.RemoveRange(rolesToRemove);
-        await context.UserRoles.AddRangeAsync(rolesToAdd);
-        await context.SaveChangesAsync();
-
-        return Result.Ok("User updated successfully.");
     }
 }
     
