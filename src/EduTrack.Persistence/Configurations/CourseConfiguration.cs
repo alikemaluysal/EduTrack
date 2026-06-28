@@ -22,6 +22,11 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
             .IsRequired()
             .HasDefaultValue(false);
 
+        builder.Property(c => c.Code)
+            .IsRequired()
+            .HasMaxLength(8);
+
+
         builder.Property(c => c.CreatedAt)
             .IsRequired();
 

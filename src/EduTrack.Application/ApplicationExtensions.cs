@@ -14,6 +14,7 @@ public static class ApplicationExtensions
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICourseService, CourseService>();
 
 
         //TODO: business rule tipine sahip tüm classlar otomatik inject edilsin

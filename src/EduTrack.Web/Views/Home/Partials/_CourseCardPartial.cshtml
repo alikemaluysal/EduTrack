@@ -1,0 +1,15 @@
+﻿@using EduTrack.Application.DTOs.Course
+@model CourseDto
+
+<div class="card h-100">
+    <div class="course-banner p-4 rounded-top">
+        <h2 class="h4 mb-1">@Model.Title</h2>
+        <p class="mb-0">@Model.InstructorFullName</p>
+    </div>
+    <div class="card-body">
+        <p class="text-secondary">@Model.Description</p>
+        <div class="d-flex justify-content-between">
+            <span class="badge text-bg-success">@Model.StudentCount students</span><a href="course-detail.html" class="btn btn-outline-success btn-sm">Open</a>
+        </div>
+    </div>
+</div>

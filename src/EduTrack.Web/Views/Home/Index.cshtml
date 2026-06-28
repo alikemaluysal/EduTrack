@@ -1,4 +1,6 @@
-﻿@{
+﻿@using EduTrack.Application.DTOs.Course
+@model List<CourseDto>
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -12,46 +14,12 @@
 </button>
 </div>
 <div class="row g-4">
-    <div class="col-md-6 col-xl-4">
-        <div class="card h-100">
-            <div class="course-banner p-4 rounded-top">
-                <h2 class="h4 mb-1">Computer Science 101</h2>
-                <p class="mb-0">Alex Rivera</p>
-            </div>
-            <div class="card-body">
-                <p class="text-secondary">Programming basics, algorithms, and digital citizenship.</p>
-                <div class="d-flex justify-content-between">
-                    <span class="badge text-bg-success">32 students</span><a href="course-detail.html" class="btn btn-outline-success btn-sm">Open</a>
-                </div>
-            </div>
+
+    @foreach(var course in Model)
+    {
+        <div class="col-md-6 col-xl-4">
+           <partial name="Partials/_CourseCardPartial" model="course" />
         </div>
-    </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card h-100">
-            <div class="course-banner p-4 rounded-top">
-                <h2 class="h4 mb-1">Algebra Foundations</h2>
-                <p class="mb-0">Priya Nair</p>
-            </div>
-            <div class="card-body">
-                <p class="text-secondary">Linear equations, graphing, and problem-solving practice.</p>
-                <div class="d-flex justify-content-between">
-                    <span class="badge text-bg-success">28 students</span><a href="course-detail.html" class="btn btn-outline-success btn-sm">Open</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card h-100">
-            <div class="course-banner p-4 rounded-top">
-                <h2 class="h4 mb-1">World History</h2>
-                <p class="mb-0">Nora Clark</p>
-            </div>
-            <div class="card-body">
-                <p class="text-secondary">Research, timelines, and discussion-based assignments.</p>
-                <div class="d-flex justify-content-between">
-                    <span class="badge text-bg-success">26 students</span><a href="course-detail.html" class="btn btn-outline-success btn-sm">Open</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    }
+
 </div>

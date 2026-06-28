@@ -9,7 +9,7 @@ using System.Security.Claims;
 namespace EduTrack.Web.Controllers;
 
 
-public class AuthController(IAuthService authService) : Controller
+public class AuthController(IAuthService authService) : BaseController
 {
     [HttpGet("Register")]
     public IActionResult Register()

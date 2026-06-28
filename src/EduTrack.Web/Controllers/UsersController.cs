@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EduTrack.Web.Controllers;
 
 [Authorize(Roles = RoleConstants.Admin)]
-public class UsersController(IUserService userService) : Controller
+public class UsersController(IUserService userService) : BaseController
 {
     public async Task<IActionResult> Index(string? searchQuery = null, int? roleId = null)
     {
