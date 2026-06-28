@@ -20,6 +20,7 @@ public static class ApplicationExtensions
         //TODO: business rule tipine sahip tüm classlar otomatik inject edilsin
         services.AddScoped<AuthBusinessRules>();
         services.AddScoped<UserBusinessRules>();
+        services.AddScoped<CourseBusinessRules>();
 
         return services;
     }

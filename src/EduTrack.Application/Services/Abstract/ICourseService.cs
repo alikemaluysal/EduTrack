@@ -5,7 +5,10 @@ namespace EduTrack.Application.Services.Abstract;
 
 public interface ICourseService
 {
-    Task<Result<List<CourseDto>>> GetAllCoursesAsync();
-    Task<Result<List<CourseDto>>> GetAllCoursesForInstructorAsync(Guid instructorId);
-    Task<Result<List<CourseDto>>> GetAllCoursesForStudentAsync(Guid studentId);
+    Task<Result<List<CourseListDto>>> GetAllCoursesAsync();
+    Task<Result<List<CourseListDto>>> GetAllCoursesForInstructorAsync(Guid instructorId);
+    Task<Result<List<CourseListDto>>> GetAllCoursesForStudentAsync(Guid studentId);
+    Task<Result<CourseCreatedResponse>> CreateCourseAsync(CreateCourseRequest request);
+    Task<Result> JoinCourseAsync(JoinCourseRequest request);
+
 }

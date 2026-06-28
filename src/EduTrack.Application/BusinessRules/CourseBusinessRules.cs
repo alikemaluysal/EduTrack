@@ -1,0 +1,28 @@
+﻿using Core.Exceptions;
+using EduTrack.Domain.Entities;
+using EduTrack.Persistence;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace EduTrack.Application.BusinessRules;
+
+public class CourseBusinessRules(AppDbContext context)
+{
+    public void CheckUserExists(User? user)
+    {
+        if (user is null)
+            throw new BusinessException("Kullanıcı bulunamadı.");
+    }
+
+    public void CheckCourseExists(Course? course)
+    {
+        if (course is null)
+            throw new BusinessException("Kurs bulunamadı.");
+    }
+    public async Task CheckStudentAlreadyEnrolled(Course? course, User? student)
+    {
+        if(await context.CourseStudent.AnyAsync(cs => cs.CourseId == course.Id && cs.UserId == student.Id))
+            throw new BusinessException("Öğrenci zaten bu kursa kayıtlı.");
+    }
+}
+  

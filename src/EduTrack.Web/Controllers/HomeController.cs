@@ -14,7 +14,7 @@ public class HomeController(ICourseService courseService) : BaseController
 {
     public async Task<IActionResult> Index()
     {
-        Result<List<CourseDto>> result;
+        Result<List<CourseListDto>> result;
 
         var userId = GetCurrentUserId();
 
