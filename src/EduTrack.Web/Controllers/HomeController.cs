@@ -3,6 +3,7 @@ using EduTrack.Application.DTOs.Course;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Constants;
 using EduTrack.Web.Models;
+using EduTrack.Web.Models.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -31,7 +32,10 @@ public class HomeController(ICourseService courseService) : BaseController
             result = await courseService.GetAllCoursesForStudentAsync(userId);
         }
 
-        return View(result.Data);
+        var viewModel = new HomeViewModel();
+        viewModel.Courses= result.Data;
+
+        return View(viewModel);
     }
 
     public IActionResult Privacy()

@@ -3,6 +3,7 @@ using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Constants;
 using EduTrack.Persistence.Configurations;
 using EduTrack.Web.Models.Course;
+using EduTrack.Web.Models.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,18 @@ public class CourseController(ICourseService courseService) : BaseController
 {
     [HttpPost]
     [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Instructor}")]
-    public async Task<IActionResult> Create(CreateCourseViewModel model)
+    public async Task<IActionResult> Create(HomeViewModel model)
     {
+
+        if (!ModelState.IsValid)
+            return RedirectToAction("Index", "Home");
+
+
         var request = new CreateCourseRequest
         {
             InstructorId = GetCurrentUserId(),
-            Title = model.Title,
-            Description = model.Description
+            Title = model.CreateCourseViewModel.Title,
+            Description = model.CreateCourseViewModel.Description
         };
 
         var response = await courseService.CreateCourseAsync(request);
@@ -26,7 +32,7 @@ public class CourseController(ICourseService courseService) : BaseController
         if (!response.Success)
         {
             ViewBag.ErrorMessage = response.Message;
-            return View(model);
+            return RedirectToAction("Index", "Home");
         }
 
         return RedirectToAction("Index", "Home");
@@ -35,11 +41,14 @@ public class CourseController(ICourseService courseService) : BaseController
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> Join(string code)
+    public async Task<IActionResult> Join(HomeViewModel model)
     {
+        if (!ModelState.IsValid)
+            return RedirectToAction("Index", "Home");
+
         var request = new JoinCourseRequest
         {
-            Code = code,
+            Code = model.JoinCourseViewModel.Code,
             StudentId = GetCurrentUserId()
         };
 
@@ -48,7 +57,7 @@ public class CourseController(ICourseService courseService) : BaseController
         if (!response.Success)
         {
             ViewBag.ErrorMessage = response.Message;
-            return View("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         return RedirectToAction("Index", "Home");

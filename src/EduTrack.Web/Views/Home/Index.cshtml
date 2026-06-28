@@ -1,6 +1,6 @@
-﻿@using EduTrack.Application.DTOs.Course
-@using EduTrack.Domain.Constants
-@model List<CourseListDto>
+﻿@using EduTrack.Domain.Constants
+@using EduTrack.Web.Models.Home
+@model HomeViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -35,7 +35,7 @@
 </div>
 <div class="row g-4">
 
-    @foreach (var course in Model)
+    @foreach (var course in Model.Courses)
     {
         <div class="col-md-6 col-xl-4">
             <partial name="Partials/_CourseCardPartial" model="course" />
@@ -53,20 +53,20 @@
 					<h2 class="modal-title h5">
 						Create course
 					</h2>
-					<button class="btn-close" data-bs-dismiss="modal">
+					<button type="button" class="btn-close" data-bs-dismiss="modal">
 					</button>
 				</div>
 				<div class="modal-body">
-					<input class="form-control mb-3" placeholder="Course name" name="Title" />
+					<input class="form-control mb-3" placeholder="Course name" asp-for="CreateCourseViewModel.Title"/>
 
-					<input class="form-control mb-3" placeholder="Course description" name="Description" />
+					<input class="form-control mb-3" placeholder="Course description" asp-for="CreateCourseViewModel.Description" />
 
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
 						Cancel
 					</button>
-					<button class="btn btn-success">
+					<button type="submit" class="btn btn-success">
 						Save course
 					</button>
 				</div>
@@ -85,19 +85,19 @@
 					<h2 class="modal-title h5">
 						Join a course
 					</h2>
-					<button class="btn-close" data-bs-dismiss="modal">
+					<button type="button" class="btn-close" data-bs-dismiss="modal">
 					</button>
 				</div>
 				<div class="modal-body">
-					<input class="form-control mb-3" placeholder="Course code" name="Code" />
+					<input class="form-control mb-3" placeholder="Course code" asp-for="JoinCourseViewModel.Code" />
 
 
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
 						Cancel
 					</button>
-					<button class="btn btn-success">
+					<button type="submit" class="btn btn-success">
 						Save course
 					</button>
 				</div>
