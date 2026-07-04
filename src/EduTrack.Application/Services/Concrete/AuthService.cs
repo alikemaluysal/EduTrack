@@ -65,8 +65,6 @@ public class AuthService(AppDbContext context, AuthBusinessRules authBusinessRul
                 IsActive = true, //TODO: email doğrulama eklendiğinde burayı false yapalım
             };
 
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
 
             var response = new RegisterResponse
             {
