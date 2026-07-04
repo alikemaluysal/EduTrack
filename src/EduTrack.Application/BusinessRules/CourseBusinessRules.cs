@@ -1,12 +1,12 @@
 ﻿using Core.Exceptions;
+using EduTrack.Application.Repositories;
 using EduTrack.Domain.Entities;
-using EduTrack.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace EduTrack.Application.BusinessRules;
 
-public class CourseBusinessRules(AppDbContext context)
+public class CourseBusinessRules(ICourseStudentRepository courseStudentRepository)
 {
     public void CheckUserExists(User? user)
     {
@@ -21,7 +21,7 @@ public class CourseBusinessRules(AppDbContext context)
     }
     public async Task CheckStudentAlreadyEnrolled(Course? course, User? student)
     {
-        if(await context.CourseStudent.AnyAsync(cs => cs.CourseId == course.Id && cs.UserId == student.Id))
+        if(await courseStudentRepository.AnyAsync(cs => cs.CourseId == course.Id && cs.UserId == student.Id))
             throw new BusinessException("Öğrenci zaten bu kursa kayıtlı.");
     }
 }

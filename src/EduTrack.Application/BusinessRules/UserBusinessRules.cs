@@ -1,11 +1,10 @@
 using Core.Exceptions;
+using EduTrack.Application.Repositories;
 using EduTrack.Domain.Entities;
-using EduTrack.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace EduTrack.Application.BusinessRules;
 
-public class UserBusinessRules(AppDbContext context)
+public class UserBusinessRules(IUserRepository userRepository)
 {
     public void CheckUserExists(User? user)
     {
@@ -15,7 +14,7 @@ public class UserBusinessRules(AppDbContext context)
 
     public async Task CheckEmailIsUniqueForUserAsync(Guid userId, string email)
     {
-        var emailExists = await context.Users.AnyAsync(x => x.Id != userId && x.Email == email);
+        var emailExists = await userRepository.AnyAsync(x => x.Id != userId && x.Email == email);
         if (emailExists)
             throw new BusinessException("Email is already used by another user.");
     }

@@ -1,23 +1,21 @@
-﻿using Azure.Core;
-using Core.Exceptions;
-using Core.Results;
+﻿using Core.Exceptions;
 using Core.Security;
+using EduTrack.Application.Repositories;
 using EduTrack.Domain.Entities;
-using EduTrack.Persistence;
 
 
 namespace EduTrack.Application.BusinessRules;
 
-public class AuthBusinessRules(AppDbContext context) 
+public class AuthBusinessRules(IUserRepository userRepository) 
 {
     public void CheckUserExists(User? user)
     {
         if (user is null)
            throw new BusinessException("Email adresi veya şifre hatalı.");
     }
-    public void CheckUserExistsByEmail(string email)
+    public async Task CheckUserExistsByEmail(string email)
     {
-        var userExists = context.Users.Any(u => u.Email == email);
+        var userExists = await userRepository.AnyAsync(u => u.Email == email);
         if (userExists)
             throw new BusinessException("Bu email ile kayıtlı bir kullanıcı zaten var.");
     }

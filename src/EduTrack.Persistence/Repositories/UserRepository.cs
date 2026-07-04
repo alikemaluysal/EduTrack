@@ -8,6 +8,7 @@ namespace EduTrack.Persistence.Repositories;
 
 public class UserRepository(AppDbContext context) : BaseRepository<User, Guid, AppDbContext>(context), IUserRepository
 {
+
     public async Task<User?> GetUserWithRolesByEmailAsync(string email)
     {
         var user = await context
@@ -19,4 +20,6 @@ public class UserRepository(AppDbContext context) : BaseRepository<User, Guid, A
         return user;
       
     }
+
+
 }

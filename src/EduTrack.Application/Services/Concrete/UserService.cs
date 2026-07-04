@@ -4,19 +4,23 @@ using EduTrack.Application.BusinessRules;
 using EduTrack.Application.DTOs.User;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Entities;
-using EduTrack.Persistence;
 using Microsoft.EntityFrameworkCore;
+using EduTrack.Application.Repositories;
 
 namespace EduTrack.Application.Services.Concrete;
 
-public class UserService(AppDbContext context, UserBusinessRules userBusinessRules) : IUserService
+public class UserService(
+    IUserRepository userRepository,
+    IRoleRepository roleRepository,
+    IUserRoleRepository userRoleRepository,
+    UserBusinessRules userBusinessRules) : IUserService
 {
     public async Task<Result<List<UserDto>>> GetAllUsersAsync(string? searchQuery = null, int? roleId = null)
     {
         //TODO: pagination 
         //TODO: dynamic query
 
-        var query = context.Users
+        var query = userRepository.Query()
             .Include(x => x.UserRoles)
             .ThenInclude(ur => ur.Role)
             .AsQueryable();
@@ -28,9 +32,9 @@ public class UserService(AppDbContext context, UserBusinessRules userBusinessRul
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            query = query.Where(x => 
-                x.FirstName.Contains(searchQuery) || 
-                x.LastName.Contains(searchQuery) || 
+            query = query.Where(x =>
+                x.FirstName.Contains(searchQuery) ||
+                x.LastName.Contains(searchQuery) ||
                 x.Email.Contains(searchQuery));
         }
 
@@ -56,10 +60,9 @@ public class UserService(AppDbContext context, UserBusinessRules userBusinessRul
     {
         try
         {
-            var user = await context.Users
-                .Include(x => x.UserRoles)
-                .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var user = await userRepository.GetAsync(
+                predicate: x => x.Id == id,
+                include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));
 
             userBusinessRules.CheckUserExists(user);
 
@@ -85,30 +88,33 @@ public class UserService(AppDbContext context, UserBusinessRules userBusinessRul
 
     public async Task<Result<List<RoleDto>>> GetAllRolesAsync()
     {
-        var roles = await context.Roles
-            .OrderBy(r => r.Name)
-            .Select(r => new RoleDto
-            {
-                Id = r.Id,
-                Name = r.Name
-            })
-            .ToListAsync();
+        var roles = await roleRepository.GetListAsync(orderBy: r => r.OrderBy(r => r.Name));
 
-        return Result<List<RoleDto>>.Ok(roles);
+        var result = roles.Select(r => new RoleDto
+        {
+            Id = r.Id,
+            Name = r.Name
+        })
+        .ToList();
+
+        return Result<List<RoleDto>>.Ok(result);
     }
 
     public async Task<Result> UpdateUserAsync(UpdateUserRequest request)
     {
         try
         {
-            var user = await context.Users
-                .Include(x => x.UserRoles)
-                .FirstOrDefaultAsync(x => x.Id == request.Id);
+            var user = await userRepository.GetAsync(
+                x => x.Id == request.Id,
+                include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                );
+
+
 
             userBusinessRules.CheckUserExists(user);
             await userBusinessRules.CheckEmailIsUniqueForUserAsync(request.Id, request.Email);
 
-            var validRoleIds = await context.Roles
+            var validRoleIds = await roleRepository.Query()
                 .Where(r => request.RoleIds.Contains(r.Id))
                 .Select(r => r.Id)
                 .ToListAsync();
@@ -136,9 +142,8 @@ public class UserService(AppDbContext context, UserBusinessRules userBusinessRul
                 })
                 .ToList();
 
-            context.UserRoles.RemoveRange(rolesToRemove);
-            await context.UserRoles.AddRangeAsync(rolesToAdd);
-            await context.SaveChangesAsync();
+            await userRoleRepository.DeleteRangeAsync(rolesToRemove);
+            await userRoleRepository.AddRangeAsync(rolesToAdd);
 
             return Result.Ok("User updated successfully.");
         }
@@ -148,4 +153,4 @@ public class UserService(AppDbContext context, UserBusinessRules userBusinessRul
         }
     }
 }
-    
+
