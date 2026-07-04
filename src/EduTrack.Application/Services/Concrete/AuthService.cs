@@ -3,25 +3,20 @@ using Core.Results;
 using Core.Security;
 using EduTrack.Application.BusinessRules;
 using EduTrack.Application.DTOs.Auth;
+using EduTrack.Application.Repositories;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Entities;
-using EduTrack.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace BlogApp.Application.Services.Concrete;
 
-public class AuthService(AppDbContext context, AuthBusinessRules authBusinessRules) : IAuthService
+public class AuthService(IUserRepository userRepository, AuthBusinessRules authBusinessRules) : IAuthService
 {
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
     {
         try
         {
-            var user = await context.Users
-                   .Include(u => u.UserRoles)
-                   .ThenInclude(ur => ur.Role)
-                   .FirstOrDefaultAsync(u => u.Email == request.Email);
-
+            var user = await userRepository.GetUserWithRolesByEmailAsync(request.Email);
 
             authBusinessRules.CheckUserExists(user);
             authBusinessRules.CheckUserPasswordMatch(user!, request.Password);
@@ -64,6 +59,8 @@ public class AuthService(AppDbContext context, AuthBusinessRules authBusinessRul
                 PasswordSalt = result.Salt,
                 IsActive = true, //TODO: email doğrulama eklendiğinde burayı false yapalım
             };
+
+            await userRepository.AddAsync(user);
 
 
             var response = new RegisterResponse

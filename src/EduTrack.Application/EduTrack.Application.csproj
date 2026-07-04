@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\Core\Core.csproj" />
-    <ProjectReference Include="..\EduTrack.Persistence\EduTrack.Persistence.csproj" />
+    <ProjectReference Include="..\EduTrack.Domain\EduTrack.Domain.csproj" />
   </ItemGroup>
 
 </Project>

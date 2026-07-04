@@ -1,14 +1,12 @@
 ﻿using Core.Domain;
 using Core.Persistence.Paging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Drawing;
 using System.Linq.Expressions;
 
 namespace Core.Persistence.Repository;
 
-public class BaseRepository<TEntity, TEntityId, TContext>(TContext Context) : IRepository<TEntity, TEntityId>
+public abstract class BaseRepository<TEntity, TEntityId, TContext>(TContext Context) : IRepository<TEntity, TEntityId>
     where TEntity : Entity<TEntityId>
     where TContext : DbContext
 {
