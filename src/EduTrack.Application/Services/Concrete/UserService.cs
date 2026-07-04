@@ -6,6 +6,7 @@ using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using EduTrack.Application.Repositories;
+using Core.DTOs;
 
 namespace EduTrack.Application.Services.Concrete;
 
@@ -15,45 +16,39 @@ public class UserService(
     IUserRoleRepository userRoleRepository,
     UserBusinessRules userBusinessRules) : IUserService
 {
-    public async Task<Result<List<UserDto>>> GetAllUsersAsync(string? searchQuery = null, int? roleId = null)
+    public async Task<Result<Paged<UserDto>>> GetAllUsersAsync(GetAllUsersQuery request)
     {
-        //TODO: pagination 
         //TODO: dynamic query
 
-        var query = userRepository.Query()
-            .Include(x => x.UserRoles)
-            .ThenInclude(ur => ur.Role)
-            .AsQueryable();
+        var users = await userRepository.GetPagedAsync(
+            index: request.Index, 
+            size: request.Size, 
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));
 
-        if (roleId is not null)
-        {
-            query = query.Where(x => x.UserRoles.Any(ur => ur.RoleId == roleId));
-        }
 
-        if (!string.IsNullOrEmpty(searchQuery))
+        var response = new Paged<UserDto>()
         {
-            query = query.Where(x =>
-                x.FirstName.Contains(searchQuery) ||
-                x.LastName.Contains(searchQuery) ||
-                x.Email.Contains(searchQuery));
-        }
-
-        var users = await query.ToListAsync();
-        var userDtos = users.Select(u => new UserDto
-        {
-            Id = u.Id,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
-            Email = u.Email,
-            IsActive = u.IsActive,
-            UserRoles = u.UserRoles.Select(ur => new UserRoleDto
+            Items = users.Items.Select(u => new UserDto
             {
-                RoleId = ur.RoleId,
-                RoleName = ur.Role.Name
-            }).ToList()
-        }).ToList();
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                IsActive = u.IsActive,
+                UserRoles = u.UserRoles.Select(ur => new UserRoleDto
+                {
+                    RoleId = ur.RoleId,
+                    RoleName = ur.Role.Name
+                }).ToList()
+            }).ToList(),
+            Count = users.Count,
+            From = users.From,
+            Index = users.Index,
+            Size = users.Size,
+            Pages = users.Pages,
+        };
 
-        return Result<List<UserDto>>.Ok(userDtos);
+        return Result<Paged<UserDto>>.Ok(response);
     }
 
     public async Task<Result<UserDto>> GetUserByIdAsync(Guid id)

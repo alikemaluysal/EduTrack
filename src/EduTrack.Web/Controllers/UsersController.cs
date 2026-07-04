@@ -10,9 +10,9 @@ namespace EduTrack.Web.Controllers;
 [Authorize(Roles = RoleConstants.Admin)]
 public class UsersController(IUserService userService) : BaseController
 {
-    public async Task<IActionResult> Index(string? searchQuery = null, int? roleId = null)
+    public async Task<IActionResult> Index(GetAllUsersQuery query)
     {
-        var response = await userService.GetAllUsersAsync(searchQuery, roleId);
+        var response = await userService.GetAllUsersAsync(query);
         ViewBag.SuccessMessage = TempData["SuccessMessage"];
         return View(response.Data);
     }

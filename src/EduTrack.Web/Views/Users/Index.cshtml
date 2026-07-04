@@ -1,6 +1,7 @@
-﻿@using EduTrack.Application.DTOs.User
+﻿@using Core.Results
+@using EduTrack.Application.DTOs.User
 @using EduTrack.Domain.Constants
-@model List<UserDto>
+@model Paged<UserDto>
 
 <div class="container py-4">
     <h1 class="page-title h2">Users</h1>
@@ -43,7 +44,7 @@
                 </thead>
                 <tbody>
 
-                    @foreach (var user in Model)
+                    @foreach (var user in Model.Items)
                     {
                         <tr>
                             <td>@user.FirstName @user.LastName</td>
@@ -69,6 +70,30 @@
                 </tbody>
             </table>
         </div>
+
+        <nav>
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link @(Model.HasPrevious ? "" : "disabled")" asp-route-index="@(Model.Index - 1)" asp-action="Index" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+
+                @for (int i = 0; i < Model.Pages; i++)
+                {
+                    <li class="page-item @(i == Model.Index ? "active" : "")">
+                        <a class="page-link" asp-route-index="@i" asp-action="Index">@(i + 1)</a>
+                    </li>
+                }
+
+                <li class="page-item">
+                    <a class="page-link @(Model.HasNext ? "" : "disabled")" asp-route-index="@(Model.Index + 1)" asp-action="Index" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 
