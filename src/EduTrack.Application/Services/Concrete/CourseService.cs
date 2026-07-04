@@ -15,8 +15,43 @@ public class CourseService(
     ICourseStudentRepository courseStudentRepository,
     CourseBusinessRules rules) : ICourseService
 {
+
+    public async Task<Result<List<CourseListDto>>> GetUserCoursesAsync(Guid userId)
+    {
+        var courses = new List<CourseListDto>();
+
+        var instructorCourses = await  courseRepository.GetListAsync(c => c.InstructorId == userId, include: c => c.Include(c => c.Instructor).Include(c => c.Students));
+        var studentCourses = await courseRepository.GetListAsync(c => c.Students.Any(s => s.UserId == userId), include: c => c.Include(c => c.Instructor).Include(c => c.Students));
+
+        courses.AddRange(instructorCourses.Select(c => new CourseListDto
+        {
+            Id = c.Id,
+            Title = c.Title,
+            Description = c.Description,
+            InstructorFullName = $"{c.Instructor.FirstName} {c.Instructor.LastName}",
+            IsInstructor = true,
+            StudentCount = c.Students.Count,
+            Code = c.Code
+        }));
+
+        courses.AddRange(studentCourses.Select(c => new CourseListDto
+        {
+            Id = c.Id,
+            Title = c.Title,
+            Description = c.Description,
+            InstructorFullName = $"{c.Instructor.FirstName} {c.Instructor.LastName}",
+            IsInstructor = false,
+            StudentCount = c.Students.Count,
+            Code = c.Code
+        }));
+
+        return Result<List<CourseListDto>>.Ok(courses);
+    }
+
+
     public async Task<Result<CourseCreatedResponse>> CreateCourseAsync(CreateCourseRequest request)
     {
+
 
         try
         {
@@ -59,68 +94,6 @@ public class CourseService(
 
 
 
-    public async Task<Result<List<CourseListDto>>> GetAllCoursesAsync()
-    {
-
-        var courses = await courseRepository.GetListAsync(
-        include: c => c.Include(c => c.Instructor).Include(c => c.Students)
-        );
-
-        var result = courses
-            .Select(c => new CourseListDto
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                InstructorFullName = $"{c.Instructor.FirstName} {c.Instructor.LastName}",
-                StudentCount = c.Students.Count,
-                Code = c.Code
-            }).ToList();
-
-        return Result<List<CourseListDto>>.Ok(result);
-    }
-
-    public async Task<Result<List<CourseListDto>>> GetAllCoursesForInstructorAsync(Guid instructorId)
-    {
-        var courses = await courseRepository.GetListAsync(
-        predicate: c => c.InstructorId == instructorId,
-        include: c => c.Include(c => c.Instructor).Include(c => c.Students)
-        );
-
-        var result = courses
-            .Select(c => new CourseListDto
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                InstructorFullName = $"{c.Instructor.FirstName} {c.Instructor.LastName}",
-                StudentCount = c.Students.Count,
-                Code = c.Code
-            }).ToList();
-
-        return Result<List<CourseListDto>>.Ok(result);
-    }
-
-    public async Task<Result<List<CourseListDto>>> GetAllCoursesForStudentAsync(Guid studentId)
-    {
-        var courses = await courseRepository.GetListAsync(
-        predicate: c=> c.Students.Any(s => s.UserId == studentId),
-        include: c => c.Include(c => c.Instructor).Include(c => c.Students)
-        );
-
-        var result = courses
-            .Select(c => new CourseListDto
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                InstructorFullName = $"{c.Instructor.FirstName} {c.Instructor.LastName}",
-                StudentCount = c.Students.Count,
-                Code = c.Code
-            }).ToList();
-
-        return Result<List<CourseListDto>>.Ok(result);
-    }
 
     public async Task<Result> JoinCourseAsync(JoinCourseRequest request)
     {

@@ -19,18 +19,7 @@ public class HomeController(ICourseService courseService) : BaseController
 
         var userId = GetCurrentUserId();
 
-        if (User.IsInRole(RoleConstants.Admin))
-        {
-            result = await courseService.GetAllCoursesAsync();
-        }
-        else if(User.IsInRole(RoleConstants.Instructor))
-        {
-            result = await courseService.GetAllCoursesForInstructorAsync(userId);
-        }
-        else
-        {
-            result = await courseService.GetAllCoursesForStudentAsync(userId);
-        }
+       result = await courseService.GetUserCoursesAsync(userId);
 
         var viewModel = new HomeViewModel();
         viewModel.Courses= result.Data;

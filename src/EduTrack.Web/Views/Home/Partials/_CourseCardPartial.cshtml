@@ -2,7 +2,7 @@
 @model CourseListDto
 
 <div class="card h-100">
-    <div class="course-banner p-4 rounded-top">
+    <div class="@(Model.IsInstructor ? "course-banner-instructor" : "course-banner") p-4 rounded-top">
         <h2 class="h4 mb-1">@Model.Title</h2>
         <p class="mb-0">@Model.InstructorFullName</p>
     </div>
@@ -14,7 +14,7 @@
             <span class="badge text-bg-success p-2">@Model.StudentCount students</span>
 
 
-            @if (!string.IsNullOrEmpty(Model.Code))
+            @if (Model.IsInstructor)
             {
                 <div class="course-code-box">
                     <span class="course-code-label">Code</span>
