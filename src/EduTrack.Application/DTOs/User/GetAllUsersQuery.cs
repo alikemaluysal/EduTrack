@@ -7,6 +7,6 @@ namespace EduTrack.Application.DTOs.User;
 
 public class GetAllUsersQuery : PagedRequest
 {
-    public string Search { get; set; } = string.Empty;
-    public List<Guid> RoleIds { get; set; } = new List<Guid>();
+    public string? Search { get; set; } = string.Empty;
+    public int? RoleId { get; set; } 
 }

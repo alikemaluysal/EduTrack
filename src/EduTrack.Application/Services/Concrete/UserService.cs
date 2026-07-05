@@ -19,8 +19,18 @@ public class UserService(
     public async Task<Result<Paged<UserDto>>> GetAllUsersAsync(GetAllUsersQuery request)
     {
         //TODO: dynamic query
+        var search = request.Search?.Trim();
 
         var users = await userRepository.GetPagedAsync(
+            predicate: u =>
+                (string.IsNullOrEmpty(search) ||
+                    (u.FirstName != null && u.FirstName.Contains(search)) ||
+                    (u.LastName != null && u.LastName.Contains(search)) ||
+                    (u.Email != null && u.Email.Contains(search)))
+                &&
+                (request.RoleId == null ||
+                    u.UserRoles.Any(ur => ur.RoleId == request.RoleId)),
+
             index: request.Index, 
             size: request.Size, 
             include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));

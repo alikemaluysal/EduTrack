@@ -10,11 +10,14 @@ namespace EduTrack.Web.Controllers;
 [Authorize(Roles = RoleConstants.Admin)]
 public class UsersController(IUserService userService) : BaseController
 {
-    public async Task<IActionResult> Index(GetAllUsersQuery query)
+    public async Task<IActionResult> Index(GetUsersViewModel model)
     {
-        var response = await userService.GetAllUsersAsync(query);
+        var response = await userService.GetAllUsersAsync(model.Query);
         ViewBag.SuccessMessage = TempData["SuccessMessage"];
-        return View(response.Data);
+
+        model.Response = response.Data;
+
+        return View(model);
     }
 
     public async Task<IActionResult> AddRole(Guid userId, int? roleId = null)
