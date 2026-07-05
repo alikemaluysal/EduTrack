@@ -12,7 +12,7 @@ concurrency:
 
 env:
   APP_NAME: edutrack
-  IMAGE_NAME: ghcr.io/alikemaluysal/EduTrack
+  IMAGE_NAME: ghcr.io/alikemaluysal/edutrack
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
