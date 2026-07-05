@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrack.Web.Controllers;
 
-public class CourseController(ICourseService courseService) : BaseController
+public class CourseController(
+    ICourseService courseService,
+    IStreamPostService streamPostService) : BaseController
 {
 
     public async Task<IActionResult> Index()
@@ -28,10 +30,10 @@ public class CourseController(ICourseService courseService) : BaseController
 
     [HttpGet]
     [Authorize]
-    public IActionResult Detail(Guid id)
+    public async Task<IActionResult> Detail(Guid id)
     {
-
-        return View();
+        var result = await streamPostService.GetStreamPosts(id);
+        return View(result.Data);
     }
 
     [HttpGet]

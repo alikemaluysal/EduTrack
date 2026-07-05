@@ -18,6 +18,10 @@ public class StreamPostConfiguration : IEntityTypeConfiguration<StreamPost>
         builder.HasOne(u => u.Course).WithMany(c => c.StreamPosts)
             .HasForeignKey(u => u.CourseId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(u => u.Instructor).WithMany(i => i.StreamPosts)
+            .HasForeignKey(u => u.InstructorId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
 }
