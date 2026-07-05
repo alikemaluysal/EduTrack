@@ -3,7 +3,7 @@ name: Deploy EduTrack
 on:
   push:
     branches:
-      - deploy
+      - master
   workflow_dispatch:
 
 concurrency:
