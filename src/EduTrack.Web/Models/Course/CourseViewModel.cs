@@ -1,9 +1,8 @@
 ﻿using EduTrack.Application.DTOs.Course;
-using EduTrack.Web.Models.Course;
 
-namespace EduTrack.Web.Models.Home;
+namespace EduTrack.Web.Models.Course;
 
-public class HomeViewModel
+public class CourseViewModel
 {
     public List<CourseListDto> Courses { get; set; } = new();
     public CreateCourseViewModel? CreateCourseViewModel { get; set; }
