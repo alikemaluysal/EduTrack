@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # Configuration Files
 appsettings.Local.json
+.env
