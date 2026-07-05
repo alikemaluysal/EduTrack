@@ -1,6 +1,6 @@
 ﻿namespace EduTrack.Application.DTOs.Course;
 
-public class CourseListDto
+public class CourseDto
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;

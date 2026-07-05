@@ -1,8 +1,11 @@
-﻿@{
+﻿@using EduTrack.Web.Models.Course
+@model CourseDetailViewModel
+
+@{
     ViewData["Title"] = "Materials";
 }
 <main class="py-4">
-    <partial name="Partials/_CourseHeaderPartial" />
+    <partial name="Partials/_CourseHeaderPartial" model="Model.CourseDetail" />
 
     <h1 class="page-title h2">Materials</h1>
     <p class="text-secondary">Course resources for Computer Science 101.</p>

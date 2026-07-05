@@ -15,12 +15,14 @@ public static class ApplicationExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
+        services.AddScoped<IStreamPostService, StreamPostService>();
 
 
         //TODO: business rule tipine sahip tüm classlar otomatik inject edilsin
         services.AddScoped<AuthBusinessRules>();
         services.AddScoped<UserBusinessRules>();
         services.AddScoped<CourseBusinessRules>();
+        services.AddScoped<StreamPostBusinessRules>();
 
         return services;
     }

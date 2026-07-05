@@ -13,4 +13,5 @@ public class Course : Entity<Guid>
 
     public virtual User Instructor { get; set; } = default!;
     public virtual ICollection<CourseStudent> Students { get; set; } = default!;
+    public virtual ICollection<StreamPost> StreamPosts { get; set; } = default!;
 }

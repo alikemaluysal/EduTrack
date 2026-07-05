@@ -16,14 +16,14 @@ public class CourseService(
     CourseBusinessRules rules) : ICourseService
 {
 
-    public async Task<Result<List<CourseListDto>>> GetUserCoursesAsync(Guid userId)
+    public async Task<Result<List<CourseDto>>> GetUserCoursesAsync(Guid userId)
     {
-        var courses = new List<CourseListDto>();
+        var courses = new List<CourseDto>();
 
         var instructorCourses = await  courseRepository.GetListAsync(c => c.InstructorId == userId, include: c => c.Include(c => c.Instructor).Include(c => c.Students));
         var studentCourses = await courseRepository.GetListAsync(c => c.Students.Any(s => s.UserId == userId), include: c => c.Include(c => c.Instructor).Include(c => c.Students));
 
-        courses.AddRange(instructorCourses.Select(c => new CourseListDto
+        courses.AddRange(instructorCourses.Select(c => new CourseDto
         {
             Id = c.Id,
             Title = c.Title,
@@ -34,7 +34,7 @@ public class CourseService(
             Code = c.Code
         }));
 
-        courses.AddRange(studentCourses.Select(c => new CourseListDto
+        courses.AddRange(studentCourses.Select(c => new CourseDto
         {
             Id = c.Id,
             Title = c.Title,
@@ -45,7 +45,7 @@ public class CourseService(
             Code = c.Code
         }));
 
-        return Result<List<CourseListDto>>.Ok(courses);
+        return Result<List<CourseDto>>.Ok(courses);
     }
 
 
@@ -127,6 +127,36 @@ public class CourseService(
 
     }
 
+    public async Task<Result<CourseDto>> GetCourseDetailAsync(Guid courseId, Guid userId)
+    {
+        try
+        {
+            var course = await courseRepository.GetAsync(
+                c => c.Id == courseId,
+                include: c => c.Include(c => c.Instructor).Include(c => c.Students));
+
+            rules.CheckCourseExists(course);
+
+            var courseDto = new CourseDto
+            {
+                Id = course!.Id,
+                Title = course.Title,
+                Description = course.Description,
+                InstructorFullName = $"{course.Instructor.FirstName} {course.Instructor.LastName}",
+                IsInstructor = course.InstructorId == userId,
+                StudentCount = course.Students.Count,
+                Code = course.Code
+            };
+
+            return Result<CourseDto>.Ok(courseDto);
+        }
+        catch (BusinessException ex)
+        {
+            return Result<CourseDto>.Fail(ex.Message);
+        }
+
+    }
+
 
     private async Task<string> GenerateUniqueCourseCode()
     {
@@ -137,4 +167,6 @@ public class CourseService(
         } while (await courseRepository.AnyAsync(c => c.Code == code));
         return code;
     }
+
+
 }

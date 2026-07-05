@@ -9,7 +9,11 @@ namespace EduTrack.Web.Controllers;
 [Authorize]
 public class HomeController(ICourseService courseService) : BaseController
 {
-  
+
+    public IActionResult Index()
+    {
+        return RedirectToAction("Index", "Course");
+    }
 
     public IActionResult Privacy()
     {

@@ -11,4 +11,5 @@ public class User : Entity<Guid>
     public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
     public bool IsActive { get; set; } = false;
     public virtual List<UserRole> UserRoles { get; set; } = default!;
+    public virtual List<StreamPost> StreamPosts { get; set; } = default!;
 }

@@ -4,7 +4,7 @@ namespace EduTrack.Web.Models.Course;
 
 public class CourseViewModel
 {
-    public List<CourseListDto> Courses { get; set; } = new();
+    public List<CourseDto> Courses { get; set; } = new();
     public CreateCourseViewModel? CreateCourseViewModel { get; set; }
     public JoinCourseViewModel? JoinCourseViewModel { get; set; }
 }
