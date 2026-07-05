@@ -1,32 +1,37 @@
 ﻿@using EduTrack.Application.DTOs.StreamPost
 @using EduTrack.Domain.Constants
+@using EduTrack.Web.Models.Course
 @{
     ViewData["Title"] = "Course Detail";
 }
 
-@model List<StreamPostDto>
+@model CourseDetailViewModel
 
 
 <main class="py-4">
-    <partial name="Partials/_CourseHeaderPartial" />
+    <partial name="Partials/_CourseHeaderPartial" model="Model.CourseDetail" />
 
     <div class="">
 
         @if (User.IsInRole(RoleConstants.Admin) || User.IsInRole(RoleConstants.Instructor))
         {
-            <div class="card mb-4">
-                <div class="card-body">
-                    <label class="form-label" for="post">Share with your class</label>
-                    <textarea id="post" class="form-control mb-3" rows="3" placeholder="Announce something to the class"></textarea>
-                    <button class="btn btn-success">Post</button>
+            <form method="post" asp-action="MakeAnnouncement" asp-controller="Course">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <label class="form-label" for="post">Share with your class</label>
+                        <textarea id="post" name="content" class="form-control mb-3" rows="3" placeholder="Announce something to the class"></textarea>
+                        <input type="hidden" name="id" value="@Model.CourseDetail.Id" />
+                        <button type="submit" class="btn btn-success">Post</button>
+                    </div>
                 </div>
-            </div>
+            </form>
+
         }
 
 
         <div class="vstack gap-3">
 
-            @foreach (var post in Model)
+            @foreach (var post in Model.StreamPosts)
             {
                 <div class="card stream-item">
                     <div class="card-body">
@@ -35,7 +40,7 @@
                             <div>
                                 <h2 class="h6 mb-1">@post.Title</h2>
                                 <p class="mb-1">@post.Content</p>
-                                <small class="text-secondary">@post.Date.ToString("f")</small>
+                                <small class="text-secondary">@post.Date.ToLocalTime().ToString("f")</small>
                             </div>
                         </div>
                     </div>

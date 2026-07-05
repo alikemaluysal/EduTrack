@@ -20,6 +20,7 @@ public class StreamPostService(
     {
         var streamPosts = await streamPostRepository.GetListAsync(
             predicate: sp => sp.CourseId == courseId, 
+            orderBy: sp => sp.OrderByDescending(s => s.Date),
             include: sp => sp.Include(sp => sp.Course).ThenInclude(c => c.Instructor));
 
         var result = streamPosts.Select(sp => new StreamPostDto
@@ -52,6 +53,7 @@ public class StreamPostService(
                 Content = request.Content,
                 Title = title,
                 Type = request.Type,
+                InstructorId = request.InstructorId,
                 Date = DateTime.UtcNow
             };
 
