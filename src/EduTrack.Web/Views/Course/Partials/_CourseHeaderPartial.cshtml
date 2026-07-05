@@ -1,0 +1,31 @@
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string ActiveClass(string controller, string action)
+    {
+        return string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+                 string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase)
+                ? " active"
+                : string.Empty;
+    }
+}
+
+<section class="course-banner p-5 mb-4">
+    <h1 class="display-6 fw-bold">Computer Science 101</h1>
+    <p class="lead mb-0">Section A - Alex Rivera - Room 204</p>
+</section>
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link @ActiveClass("Course", "Detail")" asp-action="Detail" asp-controller="Course">Stream</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @ActiveClass("Course", "Materials")" asp-action="Materials" asp-controller="Course">Materials</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @ActiveClass("Course", "Assignments")" asp-action="Assignments" asp-controller="Course">Assignments</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @ActiveClass("Course", "Students")" asp-action="Students" asp-controller="Course">Students</a>
+    </li>
+</ul>

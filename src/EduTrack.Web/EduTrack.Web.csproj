@@ -19,4 +19,8 @@
     <ProjectReference Include="..\EduTrack.Persistence\EduTrack.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Home\" />
+  </ItemGroup>
+
 </Project>

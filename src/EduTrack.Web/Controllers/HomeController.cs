@@ -1,9 +1,5 @@
-using Core.Results;
-using EduTrack.Application.DTOs.Course;
 using EduTrack.Application.Services.Abstract;
-using EduTrack.Domain.Constants;
 using EduTrack.Web.Models;
-using EduTrack.Web.Models.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -13,19 +9,7 @@ namespace EduTrack.Web.Controllers;
 [Authorize]
 public class HomeController(ICourseService courseService) : BaseController
 {
-    public async Task<IActionResult> Index()
-    {
-        Result<List<CourseListDto>> result;
-
-        var userId = GetCurrentUserId();
-
-       result = await courseService.GetUserCoursesAsync(userId);
-
-        var viewModel = new HomeViewModel();
-        viewModel.Courses= result.Data;
-
-        return View(viewModel);
-    }
+  
 
     public IActionResult Privacy()
     {

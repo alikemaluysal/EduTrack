@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Course Detail";
+}
+
+<main class="py-4">
+    <partial name="Partials/_CourseHeaderPartial" />
+
+    <div class="">
+        <div class="card mb-4">
+            <div class="card-body">
+                <label class="form-label" for="post">Share with your class</label>
+                <textarea id="post" class="form-control mb-3" rows="3" placeholder="Announce something to the class"></textarea>
+                <button class="btn btn-success">Post</button>
+            </div>
+        </div>
+        <div class="vstack gap-3">
+            <div class="card stream-item">
+                <div class="card-body">
+                    <div class="d-flex gap-3">
+                        <span class="avatar">AR</span>
+                        <div>
+                            <h2 class="h6 mb-1">Alex Rivera posted a new assignment</h2>
+                            <p class="mb-1">Essay: Digital Citizenship is due Jun 30. Review the rubric before submitting.</p>
+                            <small class="text-secondary">Today at 9:15 AM</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
