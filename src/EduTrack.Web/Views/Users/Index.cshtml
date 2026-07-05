@@ -1,7 +1,6 @@
-﻿@using Core.Results
-@using EduTrack.Application.DTOs.User
-@using EduTrack.Domain.Constants
-@model Paged<UserDto>
+﻿@using EduTrack.Domain.Constants
+@using EduTrack.Web.Models.Users
+@model GetUsersViewModel
 
 <div class="container py-4">
     <h1 class="page-title h2">Users</h1>
@@ -12,11 +11,11 @@
         <div class="row g-3 mb-4">
 
             <div class="col-md-8">
-                <input class="form-control" placeholder="Search users" name="searchQuery" />
+                <input class="form-control" placeholder="Search users" asp-for="Query.Search" />
             </div>
 
             <div class="col-md-4">
-                <select class="form-select" name="roleId" onchange="this.form.submit()">
+                <select class="form-select" asp-for="Query.RoleId" onchange="this.form.submit()">
                     <option value="">All roles</option>
                     @foreach (var role in RoleConstants.BaseRoles)
                     {
@@ -44,7 +43,7 @@
                 </thead>
                 <tbody>
 
-                    @foreach (var user in Model.Items)
+                    @foreach (var user in Model.Response.Items)
                     {
                         <tr>
                             <td>@user.FirstName @user.LastName</td>
@@ -71,24 +70,24 @@
             </table>
         </div>
 
-        <nav>
+        <nav class="mt-2 d-flex justify-content-center">
             <ul class="pagination">
                 <li class="page-item">
-                    <a class="page-link @(Model.HasPrevious ? "" : "disabled")" asp-route-index="@(Model.Index - 1)" asp-action="Index" aria-label="Previous">
+                    <a class="page-link @(Model.Response.HasPrevious ? "" : "disabled")" asp-route-index="@(Model.Response.Index - 1)" asp-action="Index" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
 
 
-                @for (int i = 0; i < Model.Pages; i++)
+                @for (int i = 0; i < Model.Response.Pages; i++)
                 {
-                    <li class="page-item @(i == Model.Index ? "active" : "")">
+                    <li class="page-item @(i == Model.Response.Index ? "active" : "")">
                         <a class="page-link" asp-route-index="@i" asp-action="Index">@(i + 1)</a>
                     </li>
                 }
 
                 <li class="page-item">
-                    <a class="page-link @(Model.HasNext ? "" : "disabled")" asp-route-index="@(Model.Index + 1)" asp-action="Index" aria-label="Next">
+                    <a class="page-link @(Model.Response.HasNext ? "" : "disabled")" asp-route-index="@(Model.Response.Index + 1)" asp-action="Index" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
