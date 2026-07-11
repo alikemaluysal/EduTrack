@@ -13,7 +13,7 @@
 
     <div class="">
 
-        @if (User.IsInRole(RoleConstants.Admin) || User.IsInRole(RoleConstants.Instructor))
+        @if (Model.CourseDetail.IsInstructor)
         {
             <form method="post" asp-action="MakeAnnouncement" asp-controller="Course">
                 <div class="card mb-4">

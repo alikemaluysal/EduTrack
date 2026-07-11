@@ -16,6 +16,7 @@ public static class ApplicationExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<IStreamPostService, StreamPostService>();
+        services.AddScoped<ICourseMaterialService, CourseMaterialService>();
 
 
         //TODO: business rule tipine sahip tüm classlar otomatik inject edilsin
@@ -23,6 +24,7 @@ public static class ApplicationExtensions
         services.AddScoped<UserBusinessRules>();
         services.AddScoped<CourseBusinessRules>();
         services.AddScoped<StreamPostBusinessRules>();
+        services.AddScoped<CourseMaterialBusinessRules>();
 
         return services;
     }

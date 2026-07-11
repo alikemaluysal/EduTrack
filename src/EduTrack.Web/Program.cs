@@ -1,4 +1,5 @@
 using EduTrack.Application;
+using EduTrack.Infrastructure;
 using EduTrack.Persistence;
 using EduTrack.Web.Extensions;
 using Microsoft.AspNetCore.DataProtection;
@@ -10,6 +11,7 @@ builder.Services.AddCookieAuth();
 builder.Services.AddControllersWithViews();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo("/app/data-protection-keys"))
