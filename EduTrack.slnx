@@ -2,6 +2,9 @@
   <Folder Name="/core/">
     <Project Path="core/Core/Core.csproj" Id="6e99363f-1750-4746-8985-22e17401c74c" />
   </Folder>
+  <Folder Name="/external-services/">
+    <Project Path="external-services/FileAPI/FileAPI.csproj" Id="ceabf79d-d1a3-4d1a-b7d4-6cadf859c04b" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/EduTrack.Application/EduTrack.Application.csproj" Id="618dd6e9-0b65-42a5-af45-a8915b294e05" />
     <Project Path="src/EduTrack.Domain/EduTrack.Domain.csproj" Id="ef9826b6-4039-40d5-a816-9ec0aff1c18b" />
