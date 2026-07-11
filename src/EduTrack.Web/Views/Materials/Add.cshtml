@@ -1,0 +1,40 @@
+﻿
+
+
+<main class="py-4">
+    <div class="card form-card mx-auto">
+        <div class="card-body p-4">
+            <h1 class="page-title h3">Add material</h1>
+            <form asp-action="AddMaterial" asp-controller="Course" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label" for="title">Title</label><input id="title" class="form-control"
+                                                                              value="Week 6 reading notes">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="type">Type</label>
+                    <select id="type" class="form-select">
+                        <option>Content</option>
+                        <option>Document</option>
+                        <option>Link</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="file">Document</label>
+                    <input type="file" id="file" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="url">Resource URL</label>
+                    <input id="url" class="form-control" placeholder="https://example.com/resource">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="desc">Description</label>
+                    <textarea id="desc" class="form-control" rows="4">Read before next week's lab.</textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="materials.html" class="btn btn-success">Save material</a><a href="materials.html" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
