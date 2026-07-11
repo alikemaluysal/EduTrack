@@ -21,8 +21,6 @@ public static class InfrastructureExtensions
 
 
 
-        services.AddScoped<IFileService, FileApiClient>();
-
         return services;
     }
 

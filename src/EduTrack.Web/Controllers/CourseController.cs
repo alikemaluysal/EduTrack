@@ -1,5 +1,6 @@
 ﻿using Core.Results;
 using EduTrack.Application.DTOs.Course;
+using EduTrack.Application.DTOs.CourseMaterial;
 using EduTrack.Application.DTOs.StreamPost;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Constants;
@@ -13,7 +14,8 @@ namespace EduTrack.Web.Controllers;
 
 public class CourseController(
     ICourseService courseService,
-    IStreamPostService streamPostService) : BaseController
+    IStreamPostService streamPostService,
+    ICourseMaterialService courseMaterialService) : BaseController
 {
 
     public async Task<IActionResult> Index()
@@ -34,21 +36,18 @@ public class CourseController(
     [Authorize]
     public async Task<IActionResult> Detail(Guid id)
     {
-        var userId = GetCurrentUserId();
-        var courseDetailResult = await courseService.GetCourseDetailAsync(id, userId);
+        var courseDetailResult = await GetCourseDetailAsync(id);
         CourseDetailViewModel viewModel = new();
 
-        if (courseDetailResult.Success)
-        {
-            viewModel.CourseDetail = courseDetailResult.Data;
-            var streamPostResult = await streamPostService.GetStreamPosts(id);
-            viewModel.StreamPosts = streamPostResult.Data;
-            return View(viewModel);
+        viewModel.CourseDetail = courseDetailResult;
+        var streamPostResult = await streamPostService.GetStreamPosts(id);
+        viewModel.StreamPosts = streamPostResult.Data;
+        return View(viewModel);
 
-        }
-
-        return View();
     }
+
+
+
 
     [HttpPost]
     [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Instructor}")]
@@ -70,10 +69,17 @@ public class CourseController(
 
     [HttpGet]
     [Authorize]
-    public IActionResult Materials(Guid id)
+    public async Task<IActionResult> Materials(Guid id)
     {
-
-        return View(new CourseDetailViewModel());
+        var courseDetailResult = await GetCourseDetailAsync(id);
+        var courseMaterialResult = await courseMaterialService.GetCourseMaterialsByCourseIdAsync(id);
+        var viewModel = new CourseDetailViewModel();
+        if (courseMaterialResult.Success)
+        {
+            viewModel.CourseDetail = courseDetailResult;
+            viewModel.Materials = courseMaterialResult.Data;
+        }
+        return View(viewModel);
     }
 
     [HttpGet]
@@ -142,6 +148,20 @@ public class CourseController(
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+
+    private async Task<CourseDto> GetCourseDetailAsync(Guid courseId)
+    {
+        var userId = GetCurrentUserId();
+        var courseDetailResult = await courseService.GetCourseDetailAsync(courseId, userId);
+
+        if (courseDetailResult.Success && courseDetailResult.Data != null)
+        {
+            return courseDetailResult.Data;
+        }
+
+        return new CourseDto();
     }
 
 }

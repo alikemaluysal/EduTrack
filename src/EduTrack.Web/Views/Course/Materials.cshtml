@@ -1,44 +1,90 @@
-﻿@using EduTrack.Web.Models.Course
+﻿@using EduTrack.Application.DTOs.CourseMaterial
+@using EduTrack.Domain.Constants
+@using EduTrack.Domain.Enums
+@using EduTrack.Web.Models.Course
 @model CourseDetailViewModel
 
 @{
     ViewData["Title"] = "Materials";
 }
+
+@{
+    string getMaterialDescriptionPreview(string? description)
+    {
+        if (!string.IsNullOrWhiteSpace(description) && description.Length > 100)
+        {
+            return description.Substring(0, 100) + "...";
+        }
+        else
+        {
+            return description;
+        }
+    }
+
+
+    string getMaterialTypeBadgeClass(MaterialType type)
+    {
+        switch (type)
+        {
+            case MaterialType.Content:
+                return "text-bg-primary";
+            case MaterialType.Link:
+                return "text-bg-success";
+            case MaterialType.Document:
+                return "text-bg-warning";
+            default:
+                return "text-bg-secondary";
+        }
+    }
+
+    string getMaterialResourceLink(CourseMaterialDto dto)
+    {
+        const string baseUrl = "https://be131-file.alikemaluysal.com";
+
+        switch (dto.Type)
+        {
+            case MaterialType.Link:
+                return dto.Url;
+
+            case MaterialType.Document:
+                return $"{baseUrl}{dto.Url}";
+            default:
+                return "#";
+        }
+    }
+}
+
 <main class="py-4">
     <partial name="Partials/_CourseHeaderPartial" model="Model.CourseDetail" />
 
+
+
     <h1 class="page-title h2">Materials</h1>
+
+    @if (Model.CourseDetail.IsInstructor)
+    {
+        <a type="submit" class="btn btn-success my-2" asp-action="Add" asp-controller="Materials" asp-route-id="@Model.CourseDetail.Id">Add Material</a>
+
+    }
+
     <p class="text-secondary">Course resources for Computer Science 101.</p>
     <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <span class="badge text-bg-primary mb-2">Slides</span>
-                    <h2 class="h5">Week 5: Web fundamentals</h2>
-                    <p class="text-secondary">HTML structure, Bootstrap layout, and accessibility basics.</p>
-                    <a class="btn btn-outline-success btn-sm" href="#">Open resource</a>
+
+        @foreach (var material in Model.Materials)
+        {
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="badge @getMaterialTypeBadgeClass(material.Type) mb-2">@material.Type</span>
+                        <h2 class="h5">@material.Title</h2>
+                        <p class="text-secondary">@getMaterialDescriptionPreview(material.Description)</p>
+                        <a class="btn btn-outline-success btn-sm" href="@getMaterialResourceLink(material)" target="_blank">Open resource</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <span class="badge text-bg-info mb-2">Document</span>
-                    <h2 class="h5">C# naming guide</h2>
-                    <p class="text-secondary">Simple conventions for variables, methods, classes, and folders.</p>
-                    <a class="btn btn-outline-success btn-sm" href="#">Open resource</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <span class="badge text-bg-secondary mb-2">Link</span>
-                    <h2 class="h5">Practice repository</h2>
-                    <p class="text-secondary">Starter exercises for loops, lists, and validation.</p>
-                    <a class="btn btn-outline-success btn-sm" href="#">Open resource</a>
-                </div>
-            </div>
-        </div>
+        }
+
     </div>
 </main>
+
+

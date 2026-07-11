@@ -20,6 +20,7 @@ public static class PersistenceExtensions
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IStreamPostRepository, StreamPostRepository>();
+        services.AddScoped<ICourseMaterialRepository, CourseMaterialRepository>();
 
         return services;
     }
