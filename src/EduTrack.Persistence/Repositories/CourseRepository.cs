@@ -10,3 +10,9 @@ public class CourseRepository(AppDbContext context) : BaseRepository<Course, Gui
 {
 
 }
+
+
+public class CourseMaterialRepository(AppDbContext context) : BaseRepository<CourseMaterial, Guid, AppDbContext>(context), ICourseMaterialRepository
+{
+
+}

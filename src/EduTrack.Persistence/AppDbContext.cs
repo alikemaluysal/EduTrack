@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Course> Courses { get; set; }
     public DbSet<CourseStudent> CourseStudent { get; set; }
     public DbSet<StreamPost> StreamPosts { get; set; }
+    public DbSet<CourseMaterial> CourseMaterials { get; set; }
     
 
 
