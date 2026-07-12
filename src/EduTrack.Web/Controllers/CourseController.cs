@@ -84,18 +84,22 @@ public class CourseController(
 
     [HttpGet]
     [Authorize]
-    public IActionResult Assignments(Guid id)
+    public async Task<IActionResult> AssignmentsAsync(Guid id)
     {
-
-        return View(new CourseDetailViewModel());
+        var courseDetailResult = await GetCourseDetailAsync(id);
+        var model = new CourseDetailViewModel();
+        model.CourseDetail = courseDetailResult;
+        return View(model);
     }
 
     [HttpGet]
     [Authorize]
-    public IActionResult Students(Guid id)
+    public async Task<IActionResult> StudentsAsync(Guid id)
     {
-
-        return View(new CourseDetailViewModel());
+        var courseDetailResult = await GetCourseDetailAsync(id);
+        var model = new CourseDetailViewModel();
+        model.CourseDetail = courseDetailResult;
+        return View(model);
     }
 
     [HttpPost]

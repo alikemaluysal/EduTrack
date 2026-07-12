@@ -1,15 +1,22 @@
 ﻿using EduTrack.Application.DTOs.CourseMaterial;
 using EduTrack.Application.Repositories;
 using EduTrack.Application.Services.Abstract;
+using EduTrack.Domain.Constants;
+using EduTrack.Domain.Enums;
+using EduTrack.Persistence.Configurations;
+using EduTrack.Web.Models.Material;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrack.Web.Controllers;
 
-public class MaterialsController(ICourseMaterialService courseMaterialService) : BaseController
+public class MaterialsController(
+    ICourseMaterialService courseMaterialService,
+    IConfiguration configuration
+    ) : BaseController
 {
     [HttpGet]
-    [Authorize]
+    [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Instructor}")]
     public IActionResult Add(Guid id)
     {
         ViewBag.CourseId = id;
@@ -17,17 +24,25 @@ public class MaterialsController(ICourseMaterialService courseMaterialService) :
     }
 
     [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> AddAsync(Guid id, CreateCourseMaterialRequest model)
+    [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Instructor}")]
+    public async Task<IActionResult> AddAsync(Guid id, CreateCourseMaterialViewModel model)
     {
-
         ViewBag.CourseId = id;
         if(!ModelState.IsValid)
             return View(model);
 
-        //TODO: servisi çağır
+        var request = new CreateCourseMaterialRequest
+        {
+            CourseId = id,
+            Title = model.Title,
+            Description = model.Description,
+            Type = model.Type,
+            Url = model.Url,
+            File = model.File,
+            InstructorId = GetCurrentUserId()
+        };
 
-        var result = await courseMaterialService.AddCourseMaterialAsync(model);
+        var result = await courseMaterialService.AddCourseMaterialAsync(request);
 
         if (!result.Success)
         {
@@ -38,5 +53,35 @@ public class MaterialsController(ICourseMaterialService courseMaterialService) :
         ViewBag.SuccessMessage = "Material başarıyla eklendi.";
 
         return View();
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> Details(Guid id)
+    {
+        var response = await courseMaterialService.GetCourseMaterialByIdAsync(id);
+
+        if(!response.Success)
+            return NotFound();
+
+        var material = response.Data;
+
+        if(material == null)
+            return NotFound();
+
+        if (material.Type == MaterialType.Link)
+            return Redirect(material.Url);
+
+        if(material.Type == MaterialType.Document)
+        {
+            var baseFileApiUrl = configuration["FileApi:BaseUrl"].TrimEnd('/');
+            var redirectUrl = $"{baseFileApiUrl}{material.Url}";
+
+            return Redirect(redirectUrl);
+        }
+
+
+        return View(response.Data);
+
     }
 }
