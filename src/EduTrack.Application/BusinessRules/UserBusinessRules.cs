@@ -1,10 +1,11 @@
+using Core.BusinessRules;
 using Core.Exceptions;
 using EduTrack.Application.Repositories;
 using EduTrack.Domain.Entities;
 
 namespace EduTrack.Application.BusinessRules;
 
-public class UserBusinessRules(IUserRepository userRepository)
+public class UserBusinessRules(IUserRepository userRepository) : IBusinessRule
 {
     public void CheckUserExists(User? user)
     {
