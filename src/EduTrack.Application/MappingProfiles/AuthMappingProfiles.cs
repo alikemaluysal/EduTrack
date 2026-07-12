@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using EduTrack.Application.DTOs.Auth;
 using EduTrack.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace EduTrack.Application.MappingProfiles;
 
