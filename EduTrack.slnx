@@ -12,4 +12,7 @@
     <Project Path="src/EduTrack.Persistence/EduTrack.Persistence.csproj" Id="7d74491e-f962-4e5b-a3f7-e6c0b5695c8a" />
     <Project Path="src/EduTrack.Web/EduTrack.Web.csproj" Id="445abc9f-03ae-4979-9283-002d4a2b9d7b" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EduTrack.Application.UnitTest/EduTrack.Application.UnitTest.csproj" Id="dddc35e3-19a1-48f4-863e-c0933efcb85b" />
+  </Folder>
 </Solution>
