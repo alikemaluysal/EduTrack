@@ -37,21 +37,6 @@
         }
     }
 
-    string getMaterialResourceLink(CourseMaterialDto dto)
-    {
-        const string baseUrl = "https://be131-file.alikemaluysal.com";
-
-        switch (dto.Type)
-        {
-            case MaterialType.Link:
-                return dto.Url;
-
-            case MaterialType.Document:
-                return $"{baseUrl}{dto.Url}";
-            default:
-                return "#";
-        }
-    }
 }
 
 <main class="py-4">
@@ -78,7 +63,13 @@
                         <span class="badge @getMaterialTypeBadgeClass(material.Type) mb-2">@material.Type</span>
                         <h2 class="h5">@material.Title</h2>
                         <p class="text-secondary">@getMaterialDescriptionPreview(material.Description)</p>
-                        <a class="btn btn-outline-success btn-sm" href="@getMaterialResourceLink(material)" target="_blank">Open resource</a>
+                        <a class="btn btn-outline-success btn-sm" asp-action="Details" asp-controller="Materials" asp-route-id="@material.Id" target="_blank">Open resource</a>
+
+                        <div class="d-flex flex-row-reverse">
+                            <small class="text-secondary">@material.Date.ToLocalTime().ToString("dd/MM/yyyy")</small>
+
+                        </div>
+
                     </div>
                 </div>
             </div>

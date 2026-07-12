@@ -29,6 +29,7 @@ public class StreamPostService(
             Title = sp.Title,
             InstructorInitials = GetInstructorInitials(sp.Course.Instructor),
             Content = sp.Content,
+            Type = sp.Type,
             Date = sp.Date
         }).ToList();
 

@@ -1,14 +1,13 @@
 ﻿using EduTrack.Domain.Enums;
 
-namespace EduTrack.Application.DTOs.CourseMaterial;
+namespace EduTrack.Web.Models.Material;
 
-public class CourseMaterialDto
+public class CreateCourseMaterialViewModel
 {
-    public Guid Id { get; set; }
     public Guid CourseId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; } = string.Empty;
     public MaterialType Type { get; set; }
     public string? Url { get; set; }
-    public DateTime Date { get; set; }
+    public IFormFile? File { get; set; }
 }

@@ -10,6 +10,6 @@ public class CourseMaterial : Entity<Guid>
     public string? Description { get; set; } = string.Empty;
     public MaterialType Type { get; set; }
     public string? Url{ get; set; }
-
+    public DateTime Date { get; set; }
     public virtual Course Course { get; set; } = default!;
 }

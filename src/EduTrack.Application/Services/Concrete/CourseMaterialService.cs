@@ -3,6 +3,7 @@ using Core.Results;
 using EduTrack.Application.BusinessRules;
 using EduTrack.Application.DTOs.CourseMaterial;
 using EduTrack.Application.DTOs.File;
+using EduTrack.Application.DTOs.StreamPost;
 using EduTrack.Application.Repositories;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Domain.Entities;
@@ -15,7 +16,8 @@ public class CourseMaterialService(
     ICourseMaterialRepository courseMaterialRepository,
     ICourseRepository courseRepository,
     CourseMaterialBusinessRules rules,
-    IFileService fileService
+    IFileService fileService,
+    IStreamPostService streamPostService
     ) : ICourseMaterialService
 {
     public async Task<Result<CourseMaterialDto>> AddCourseMaterialAsync(CreateCourseMaterialRequest request)
@@ -36,13 +38,25 @@ public class CourseMaterialService(
                 Description = request.Description,
                 Type = request.Type,
                 Url = request.Url,
-                CourseId = request.CourseId
+                CourseId = request.CourseId,
+                Date = DateTime.UtcNow
             };
 
             if (request.Type == MaterialType.Document && request.File is not null)
                 courseMaterial.Url = await UploadFileAsync(request.File);
 
             var entity = await courseMaterialRepository.AddAsync(courseMaterial);
+
+
+            var streamPostRequest = new CreateStreamPostRequest
+            {
+                Content = entity.Id.ToString(),
+                Type = StreamPostType.Material,
+                CourseId = entity.CourseId,
+                InstructorId = request.InstructorId
+            };
+
+            await streamPostService.CreateStreamPost(streamPostRequest);
 
             return Result<CourseMaterialDto>.Ok(new CourseMaterialDto
             {
@@ -88,7 +102,9 @@ public class CourseMaterialService(
                 Description = material.Description,
                 Type = material.Type,
                 Url = material.Url,
-                CourseId = material.CourseId
+                CourseId = material.CourseId,
+                Date = material.Date
+                
             };
             return Result<CourseMaterialDto>.Ok(dto);
 
@@ -107,7 +123,9 @@ public class CourseMaterialService(
             var course = await courseRepository.GetAsync(c => c.Id == courseId);
             rules.CheckCourseExists(course);
 
-            var materials = await courseMaterialRepository.GetListAsync(a => a.CourseId == courseId);
+            var materials = await courseMaterialRepository.GetListAsync(
+                predicate: a => a.CourseId == courseId,
+                orderBy: q => q.OrderByDescending(a => a.Date));
 
             var dto = materials.Select(cm => new CourseMaterialDto
             {
@@ -116,7 +134,8 @@ public class CourseMaterialService(
                 Description = cm.Description,
                 Type = cm.Type,
                 Url = cm.Url,
-                CourseId = cm.CourseId
+                CourseId = cm.CourseId,
+                Date = cm.Date
             }).ToList();
 
             return Result<List<CourseMaterialDto>>.Ok(dto);

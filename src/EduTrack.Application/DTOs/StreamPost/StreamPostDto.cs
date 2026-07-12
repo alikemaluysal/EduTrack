@@ -1,4 +1,6 @@
-﻿namespace EduTrack.Application.DTOs.StreamPost;
+﻿using EduTrack.Domain.Enums;
+
+namespace EduTrack.Application.DTOs.StreamPost;
 
 public class StreamPostDto
 {
@@ -6,5 +8,6 @@ public class StreamPostDto
     public string InstructorInitials { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
+    public StreamPostType Type { get; set; }
     public DateTime Date { get; set; }
 }
