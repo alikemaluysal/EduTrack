@@ -1,4 +1,5 @@
-﻿using Core.Exceptions;
+﻿using Core.BusinessRules;
+using Core.Exceptions;
 using EduTrack.Application.DTOs.CourseMaterial;
 using EduTrack.Domain.Entities;
 using EduTrack.Domain.Enums;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace EduTrack.Application.BusinessRules;
 
-public class CourseMaterialBusinessRules
+public class CourseMaterialBusinessRules : IBusinessRule
 {
     public void CheckCourseExists(Course? course)
     {

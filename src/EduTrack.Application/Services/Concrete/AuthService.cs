@@ -1,4 +1,5 @@
-﻿using Core.Exceptions;
+﻿using AutoMapper;
+using Core.Exceptions;
 using Core.Results;
 using Core.Security;
 using EduTrack.Application.BusinessRules;
@@ -10,7 +11,10 @@ using EduTrack.Domain.Entities;
 
 namespace BlogApp.Application.Services.Concrete;
 
-public class AuthService(IUserRepository userRepository, AuthBusinessRules authBusinessRules) : IAuthService
+public class AuthService(
+    IUserRepository userRepository, 
+    AuthBusinessRules authBusinessRules,
+    IMapper mapper) : IAuthService
 {
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
     {
@@ -21,16 +25,7 @@ public class AuthService(IUserRepository userRepository, AuthBusinessRules authB
             authBusinessRules.CheckUserExists(user);
             authBusinessRules.CheckUserPasswordMatch(user!, request.Password);
 
-
-            var response = new LoginResponse
-            {
-                Id = user!.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                IsActive = user.IsActive,
-                Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
-            };
+            var response = mapper.Map<LoginResponse>(user);
 
 
             return Result<LoginResponse>.Ok(response);
@@ -46,29 +41,18 @@ public class AuthService(IUserRepository userRepository, AuthBusinessRules authB
     {
         try
         {
-            authBusinessRules.CheckUserExistsByEmail(request.Email);
+            await authBusinessRules.CheckUserExistsByEmail(request.Email);
 
             var result = HashingHelper.CreatePasswordHash(request.Password);
 
-            var user = new User
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                PasswordHash = result.Hash,
-                PasswordSalt = result.Salt,
-                IsActive = true, //TODO: email doğrulama eklendiğinde burayı false yapalım
-            };
+            var user = mapper.Map<User>(request);
+            user.PasswordHash = result.Hash;
+            user.PasswordSalt = result.Salt;
+            user.IsActive = true; //TODO: email doğrulama eklendiğinde burayı false yapalım
 
             await userRepository.AddAsync(user);
 
-
-            var response = new RegisterResponse
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                IsActive = user.IsActive,
-            };
+            var response = mapper.Map<RegisterResponse>(user);
 
             return Result<RegisterResponse>.Ok(response);
 
