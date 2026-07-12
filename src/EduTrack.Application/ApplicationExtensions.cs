@@ -1,10 +1,10 @@
 ﻿using BlogApp.Application.Services.Concrete;
-using EduTrack.Application.BusinessRules;
+using Core.BusinessRules;
 using EduTrack.Application.Services.Abstract;
 using EduTrack.Application.Services.Concrete;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using System.Reflection;
 namespace EduTrack.Application;
 
 public static class ApplicationExtensions
@@ -19,12 +19,12 @@ public static class ApplicationExtensions
         services.AddScoped<ICourseMaterialService, CourseMaterialService>();
 
 
-        //TODO: business rule tipine sahip tüm classlar otomatik inject edilsin
-        services.AddScoped<AuthBusinessRules>();
-        services.AddScoped<UserBusinessRules>();
-        services.AddScoped<CourseBusinessRules>();
-        services.AddScoped<StreamPostBusinessRules>();
-        services.AddScoped<CourseMaterialBusinessRules>();
+        services.Scan(s =>
+             s.FromAssemblies(Assembly.GetExecutingAssembly())
+             .AddClasses(classes => classes.AssignableTo<IBusinessRule>())
+             .AsSelf()
+             .WithScopedLifetime()
+             );
 
         return services;
     }
