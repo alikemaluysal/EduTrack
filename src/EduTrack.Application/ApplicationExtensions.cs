@@ -19,6 +19,9 @@ public static class ApplicationExtensions
         services.AddScoped<ICourseMaterialService, CourseMaterialService>();
 
 
+        services.AddAutoMapper(_ => { }, Assembly.GetExecutingAssembly());
+
+
         services.Scan(s =>
              s.FromAssemblies(Assembly.GetExecutingAssembly())
              .AddClasses(classes => classes.AssignableTo<IBusinessRule>())
